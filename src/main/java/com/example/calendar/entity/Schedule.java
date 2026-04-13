@@ -44,9 +44,8 @@ public class Schedule {
     private LocalDateTime editDate;
 
     // 일정 수정시 사용됨
-    public void update(String title, String content, String writerName) {
+    public void update(String title, String writerName) {
         this.title = title;
-        this.content = content;
         this.writerName = writerName;
     }
 }

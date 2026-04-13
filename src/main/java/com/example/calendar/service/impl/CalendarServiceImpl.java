@@ -44,8 +44,12 @@ public class CalendarServiceImpl implements CalendarService {
      */
     @Override
     @Transactional
-    public List<ScheduleResponseDto> getSchedules() {
-        return calendarRepository.findAllByOrderByIdDesc().stream().map(ScheduleResponseDto::new).toList();
+    public List<ScheduleResponseDto> getSchedules(String writerName) {
+        if(writerName == null || writerName.isEmpty()) {
+            return calendarRepository.findAllByOrderByEditDateDesc().stream().map(ScheduleResponseDto::new).toList();
+        } else {
+            return calendarRepository.findAllByOrderByEditDateDesc().stream().filter(s -> s.getWriterName().equals(writerName)).map(ScheduleResponseDto::new).toList();
+        }
     }
 
     /**
@@ -67,13 +71,19 @@ public class CalendarServiceImpl implements CalendarService {
      */
     @Override
     @Transactional  // 데이터 변경을 감지해 자동으로 DB에 반영되게 하기 위해
-    public ScheduleResponseDto updateSchedule(Long id, ScheduleRequestDto dto) {
+    public ScheduleResponseDto updateSchedule(Long id, String password, ScheduleRequestDto dto) {
 
         // 수정할 일정 불러오기
         Schedule updatedSchedule = calendarRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("수정 실패"));
 
-        // 해당일정의 변경점 반영
-        updatedSchedule.update(dto.getTitle(), dto.getContent(), dto.getWriterName());
+        // 비밀번호 비교
+        if(updatedSchedule.getPassword().equals(password)) {
+            // 해당일정의 변경점 반영
+            updatedSchedule.update(dto.getTitle(), dto.getWriterName());
+        } else {
+            // 만일 다르다면 예외 처리
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
 
         // 결과 반환
         return new ScheduleResponseDto(updatedSchedule);
@@ -87,9 +97,16 @@ public class CalendarServiceImpl implements CalendarService {
      */
     @Override
     @Transactional
-    public void deleteSchedule(Long id) {
+    public void deleteSchedule(Long id, String password) {
         // 일단 먼저 해당 일정이 있는지 조회 후 삭제 진행
-        calendarRepository.delete(calendarRepository.findById(id).orElseThrow());
+        Schedule deletedSchedule = calendarRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 일정을 찾을수 없습니다."));
+
+        if(deletedSchedule.getPassword().equals(password)) {
+            calendarRepository.delete(deletedSchedule);
+        } else {
+            // 만일 다르다면 예외 처리
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
 
     }
 

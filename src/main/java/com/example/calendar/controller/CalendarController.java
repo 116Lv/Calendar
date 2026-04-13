@@ -39,9 +39,9 @@ public class CalendarController {
      * @return 전체 일정 정보와 상태 코드 200(OK) 반환
      */
     @GetMapping("/schedules")
-    public ResponseEntity<List<ScheduleResponseDto>> getSchedules() {
+    public ResponseEntity<List<ScheduleResponseDto>> getSchedules(@RequestParam(required = false) String writerName) {
         // 상태 코드 200(OK)과 함께 조회된 일정 목록을 Body에 담아 반환
-        return ResponseEntity.ok(calendarService.getSchedules());
+        return ResponseEntity.ok(calendarService.getSchedules(writerName));
     }
 
     /**
@@ -64,7 +64,7 @@ public class CalendarController {
     @PutMapping("/schedules/{id}")
     public ResponseEntity<ScheduleResponseDto> updateSchedule(@PathVariable Long id, @RequestBody ScheduleRequestDto dto) {
         // 상태 코드 200(OK)과 함께 수정된 일정을 Body에 담아 반환
-        return ResponseEntity.ok(calendarService.updateSchedule(id, dto));
+        return ResponseEntity.ok(calendarService.updateSchedule(id, dto.getPassword(), dto));
     }
 
     /**
@@ -73,9 +73,9 @@ public class CalendarController {
      * @return 상태 코드 204(No Content) 반환
      */
     @DeleteMapping("/schedules/{id}")
-    public ResponseEntity<Void> deleteSchedule(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteSchedule(@PathVariable Long id, @RequestBody ScheduleRequestDto dto) {
         // 요청한 일정 삭제 처리
-        calendarService.deleteSchedule(id);
+        calendarService.deleteSchedule(id, dto.getPassword());
 
         // 상태 코드 204(No Content)를 반환
         return ResponseEntity.noContent().build();

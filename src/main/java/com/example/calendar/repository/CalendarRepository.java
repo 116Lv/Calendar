@@ -18,7 +18,7 @@ public interface CalendarRepository extends JpaRepository<Schedule, Long> {
      * 아이디(ID) 값을 기준으로 내림차순 정렬하여 전체 일정을 조회합니다.
      * 최신 등록된 아이디가 가장 먼저 나옵니다.
      */
-    List<Schedule> findAllByOrderByIdDesc();
+    List<Schedule> findAllByOrderByEditDateDesc();
 
     /**
      * ID로 특정 일정을 조회합니다.

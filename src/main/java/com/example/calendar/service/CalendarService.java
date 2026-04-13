@@ -22,7 +22,7 @@ public interface CalendarService {
      * 전체 일정을 조회합니다.
      * @return 전체 일정 정보를 담은 응답 DTO (비밀번호 제외)
      */
-    List<ScheduleResponseDto> getSchedules();
+    List<ScheduleResponseDto> getSchedules(String writerName);
 
     /**
      * 특정 일정을 조회합니다.
@@ -37,11 +37,11 @@ public interface CalendarService {
      * @param dto : 수정할 일정 정보가 담긴 요청 DTO
      * @return 수정된 일정 정보를 담은 응답 DTO (비밀번호 제외)
      */
-    ScheduleResponseDto updateSchedule(Long id, ScheduleRequestDto dto);
+    ScheduleResponseDto updateSchedule(Long id, String password, ScheduleRequestDto dto);
 
     /**
      * 특정 일정을 삭제합니다.
      * @param id : 삭제할 일정의 id값
      */
-    void deleteSchedule(Long id);
+    void deleteSchedule(Long id, String password);
 }
