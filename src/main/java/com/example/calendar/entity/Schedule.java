@@ -1,10 +1,7 @@
 package com.example.calendar.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -24,6 +21,7 @@ public class Schedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // DB의 Auto Increment
+    @Setter
     private Long id;
 
     @Column(nullable = false)   // NOT NULL
@@ -45,4 +43,10 @@ public class Schedule {
     @LastModifiedDate   // 엔티티 수정 시 시간이 자동으로 업데이트됨
     private LocalDateTime editDate;
 
+    // 일정 수정시 사용됨
+    public void update(String title, String content, String writerName) {
+        this.title = title;
+        this.content = content;
+        this.writerName = writerName;
+    }
 }

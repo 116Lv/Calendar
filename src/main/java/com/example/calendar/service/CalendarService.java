@@ -30,4 +30,12 @@ public interface CalendarService {
      * @return 요청한 일정 정보를 담은 응답 DTO (비밀번호 제외)
      */
     ScheduleResponseDto getSchedule(Long id);
+
+    /**
+     * 특정 일정을 수정합니다.
+     * @param id : 수정할 일정의 id값
+     * @param dto : 수정할 일정 정보가 담긴 요청 DTO
+     * @return 수정된 일정 정보를 담은 응답 DTO (비밀번호 제외)
+     */
+    ScheduleResponseDto updateSchedule(Long id, ScheduleRequestDto dto);
 }

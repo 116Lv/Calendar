@@ -46,13 +46,26 @@ public class CalendarController {
 
     /**
      * 특정 일정 조회 API
+     * @param id : 조회할 일정의 id값
      * @return 특정 일정 정보와 상태 코드 200(OK) 반환
      */
     @GetMapping("/schedules/{id}")
-    public ResponseEntity<ScheduleResponseDto> getSchedules(@PathVariable Long id) {
-
+    public ResponseEntity<ScheduleResponseDto> getSchedule(@PathVariable Long id) {
         // 상태 코드 200(OK)과 함께 조회된 일정을 Body에 담아 반환
         return ResponseEntity.ok(calendarService.getSchedule(id));
     }
+
+    /**
+     * 특정 일정 수정 API
+     * @param id : 수정할 일정의 id값
+     * @param dto : 클라이언트로부터 전달받은 수정할 일정 정보 (JSON타입)
+     * @return 수정 완료된 일정 정보와 상태 코드 200(OK) 반환
+     */
+    @PutMapping("/schedules/{id}")
+    public ResponseEntity<ScheduleResponseDto> updateSchedules(@PathVariable Long id, @RequestBody ScheduleRequestDto dto) {
+        // 상태 코드 200(OK)과 함께 수정된 일정을 Body에 담아 반환
+        return ResponseEntity.ok(calendarService.updateSchedule(id, dto));
+    }
+
 
 }

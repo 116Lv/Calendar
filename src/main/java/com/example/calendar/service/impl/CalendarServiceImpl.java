@@ -54,8 +54,31 @@ public class CalendarServiceImpl implements CalendarService {
      * @return 요청한 일정 정보를 담은 응답 DTO (비밀번호 제외)
      */
     @Override
+    @Transactional
     public ScheduleResponseDto getSchedule(Long id) {
         return calendarRepository.findById(id).map(ScheduleResponseDto::new).orElseThrow(() -> new IllegalArgumentException("조회 실패"));
+    }
+
+    /**
+     * 특정 일정을 수정합니다.
+     * @param id : 수정할 일정의 id값
+     * @param dto : 수정할 일정 정보가 담긴 요청 DTO
+     * @return 수정된 일정 정보를 담은 응답 DTO (비밀번호 제외)
+     */
+    @Override
+    @Transactional  // 데이터 변경을 감지해 자동으로 DB에 반영되게 하기 위해
+    public ScheduleResponseDto updateSchedule(Long id, ScheduleRequestDto dto) {
+
+        // 수정할 일정 불러오기
+        Schedule updatedSchedule = calendarRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("조회실패"));
+
+        // 해당일정의 변경점 반영
+        updatedSchedule.update(dto.getTitle(), dto.getContent(), dto.getWriterName());
+
+        // 결과 반환
+        return new ScheduleResponseDto(updatedSchedule);
+
+        // 반환과 동시에 UPDATE 쿼리문 자동 실행 돼서 해당 변경점이 DB(메모리)의 내용도 변경
     }
 
 }
