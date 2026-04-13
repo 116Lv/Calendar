@@ -1,5 +1,7 @@
 package com.example.calendar.controller;
 
+import com.example.calendar.dto.CommentRequestDto;
+import com.example.calendar.dto.CommentResponseDto;
 import com.example.calendar.dto.ScheduleRequestDto;
 import com.example.calendar.dto.ScheduleResponseDto;
 import com.example.calendar.service.CalendarService;
@@ -79,6 +81,21 @@ public class CalendarController {
 
         // 상태 코드 204(No Content)를 반환
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 특정 일정 댓글 작성 API
+     * @param id : 작성할 일정의 id값
+     * @param dto : 특정 일정에 작성할 댓글 정보가 담긴 요청 DTO
+     * @return 작성 완료된 댓글 정보와 상태 코드 201(Created) 반환
+     */
+    @PostMapping("/schedules/{id}/comments")
+    public ResponseEntity<CommentResponseDto> saveComment(@PathVariable Long id, @RequestBody CommentRequestDto dto) {
+
+        CommentResponseDto responseDto = calendarService.saveComment(id, dto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+
     }
 
 }

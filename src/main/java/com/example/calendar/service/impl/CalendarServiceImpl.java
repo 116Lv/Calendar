@@ -1,9 +1,13 @@
 package com.example.calendar.service.impl;
 
+import com.example.calendar.dto.CommentRequestDto;
+import com.example.calendar.dto.CommentResponseDto;
 import com.example.calendar.dto.ScheduleRequestDto;
 import com.example.calendar.dto.ScheduleResponseDto;
+import com.example.calendar.entity.Comment;
 import com.example.calendar.entity.Schedule;
 import com.example.calendar.repository.CalendarRepository;
+import com.example.calendar.repository.CommentRepository;
 import com.example.calendar.service.CalendarService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +24,8 @@ import java.util.List;
 public class CalendarServiceImpl implements CalendarService {
 
     private final CalendarRepository calendarRepository;
+
+    private final CommentRepository commentRepository;
 
     /**
      * 일정을 저장하고 저장된 결과를 반환합니다.
@@ -108,6 +114,28 @@ public class CalendarServiceImpl implements CalendarService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
+    }
+
+    /**
+     * 특정 일정에 댓글을 작성합니다.
+     * @param id : 작성할 일정의 id값
+     * @param dto : 특정 일정에 작성할 댓글 정보가 담긴 요청 DTO
+     * @return 작성된 댓글 정보를 담은 응답 DTO (비밀번호 제외)
+     */
+    @Override
+    @Transactional
+    public CommentResponseDto saveComment(Long id, CommentRequestDto dto) {
+        // 일정이 있는지 먼저 확인
+        calendarRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("댓글을 달 일정이 존재하지 않습니다."));
+
+        // 해당 일정에 댓글이 10개 이상인지 확인 후 댓글 추가
+        if(commentRepository.countByScheduleId(id) >= 10) {
+            throw new IllegalArgumentException("한 일정에는 10개의 댓글만 작성 가능합니다.");
+        }
+
+        Comment saved = commentRepository.save(dto.toEntity());
+
+        return new CommentResponseDto(saved);
     }
 
 }

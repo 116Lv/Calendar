@@ -8,7 +8,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
 /**
- * 일정 정보를 저장하는 데이터베이스 매핑 엔티티입니다.
+ * 댓글 정보를 저장하는 데이터베이스 매핑 엔티티입니다.
  * JPA Auditing을 사용하여 생성 및 수정 시간을 자동으로 관리합니다.
  */
 @Getter
@@ -17,17 +17,17 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)  // 생성,수정 시간 자동 기록을 위한 리스너
-public class Schedule {
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // DB의 Auto Increment
     private Long id;
 
     @Column(nullable = false)   // NOT NULL
-    private String title;
+    private Long scheduleId;
 
     @Column(columnDefinition = "TEXT")  // 긴 본문을 저장하기 위해 TEXT 타입으로 지정
-    private String content;
+    private String commentContent;
 
     @Column(nullable = false)
     private String writerName;
@@ -41,10 +41,4 @@ public class Schedule {
 
     @LastModifiedDate   // 엔티티 수정 시 시간이 자동으로 업데이트됨
     private LocalDateTime editDate;
-
-    // 일정 수정시 사용됨
-    public void update(String title, String writerName) {
-        this.title = title;
-        this.writerName = writerName;
-    }
 }

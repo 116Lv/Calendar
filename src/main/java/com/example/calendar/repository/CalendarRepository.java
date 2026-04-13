@@ -25,4 +25,5 @@ public interface CalendarRepository extends JpaRepository<Schedule, Long> {
      * 결과가 null인 경우를 안전하게 대비하기 위해 Optional로 반환합니다.
      */
     Optional<Schedule> findById(Long id);
+
 }

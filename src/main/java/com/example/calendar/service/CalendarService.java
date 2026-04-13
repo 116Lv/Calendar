@@ -1,5 +1,7 @@
 package com.example.calendar.service;
 
+import com.example.calendar.dto.CommentRequestDto;
+import com.example.calendar.dto.CommentResponseDto;
 import com.example.calendar.dto.ScheduleRequestDto;
 import com.example.calendar.dto.ScheduleResponseDto;
 
@@ -44,4 +46,13 @@ public interface CalendarService {
      * @param id : 삭제할 일정의 id값
      */
     void deleteSchedule(Long id, String password);
+
+
+    /**
+     * 특정 일정에 댓글을 작성합니다.
+     * @param id : 작성할 일정의 id값
+     * @param dto : 특정 일정에 작성할 댓글 정보가 담긴 요청 DTO
+     * @return 작성된 댓글 정보를 담은 응답 DTO (비밀번호 제외)
+     */
+    CommentResponseDto saveComment(Long id, CommentRequestDto dto);
 }
