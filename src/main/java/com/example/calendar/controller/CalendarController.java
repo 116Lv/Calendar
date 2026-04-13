@@ -6,9 +6,9 @@ import com.example.calendar.service.CalendarService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 일정 관리 관련 API 요청을 처리하는 컨트롤러입니다.
@@ -34,5 +34,25 @@ public class CalendarController {
         return  ResponseEntity.status(HttpStatus.CREATED).body(writtenDto);
     }
 
+    /**
+     * 전체 일정 조회 API
+     * @return 전체 일정 정보와 상태 코드 200(OK) 반환
+     */
+    @GetMapping("/schedules")
+    public ResponseEntity<List<ScheduleResponseDto>> getSchedules() {
+        // 상태 코드 200(OK)과 함께 조회된 일정 목록을 Body에 담아 반환
+        return ResponseEntity.ok(calendarService.getSchedules());
+    }
+
+    /**
+     * 특정 일정 조회 API
+     * @return 특정 일정 정보와 상태 코드 200(OK) 반환
+     */
+    @GetMapping("/schedules/{id}")
+    public ResponseEntity<ScheduleResponseDto> getSchedules(@PathVariable Long id) {
+
+        // 상태 코드 200(OK)과 함께 조회된 일정을 Body에 담아 반환
+        return ResponseEntity.ok(calendarService.getSchedule(id));
+    }
 
 }

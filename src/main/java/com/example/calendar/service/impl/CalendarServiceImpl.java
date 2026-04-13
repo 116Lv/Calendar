@@ -9,6 +9,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * CalendarService 인터페이스의 구현체입니다.
  * 실제 데이터베이스와의 상호작용 및 비즈니스 로직을 수행합니다.
@@ -34,6 +36,26 @@ public class CalendarServiceImpl implements CalendarService {
 
         // 위에서 저장한 Entity를 다시 응답DTO로 변환 후 반환
         return new ScheduleResponseDto(saved);
+    }
+
+    /**
+     * 전체 일정을 조회합니다.
+     * @return 전체 일정 정보를 담은 응답 DTO (비밀번호 제외)
+     */
+    @Override
+    @Transactional
+    public List<ScheduleResponseDto> getSchedules() {
+        return calendarRepository.findAllByOrderByIdDesc().stream().map(ScheduleResponseDto::new).toList();
+    }
+
+    /**
+     * 특정 일정을 조회합니다.
+     * @param id : 검색할 일정의 id값
+     * @return 요청한 일정 정보를 담은 응답 DTO (비밀번호 제외)
+     */
+    @Override
+    public ScheduleResponseDto getSchedule(Long id) {
+        return calendarRepository.findById(id).map(ScheduleResponseDto::new).orElseThrow(() -> new IllegalArgumentException("조회 실패"));
     }
 
 }
