@@ -62,10 +62,23 @@ public class CalendarController {
      * @return 수정 완료된 일정 정보와 상태 코드 200(OK) 반환
      */
     @PutMapping("/schedules/{id}")
-    public ResponseEntity<ScheduleResponseDto> updateSchedules(@PathVariable Long id, @RequestBody ScheduleRequestDto dto) {
+    public ResponseEntity<ScheduleResponseDto> updateSchedule(@PathVariable Long id, @RequestBody ScheduleRequestDto dto) {
         // 상태 코드 200(OK)과 함께 수정된 일정을 Body에 담아 반환
         return ResponseEntity.ok(calendarService.updateSchedule(id, dto));
     }
 
+    /**
+     * 특정 일정 삭제 API
+     * @param id : 삭제할 일정의 id값
+     * @return 상태 코드 204(No Content) 반환
+     */
+    @DeleteMapping("/schedules/{id}")
+    public ResponseEntity<Void> deleteSchedule(@PathVariable Long id) {
+        // 요청한 일정 삭제 처리
+        calendarService.deleteSchedule(id);
+
+        // 상태 코드 204(No Content)를 반환
+        return ResponseEntity.noContent().build();
+    }
 
 }

@@ -70,7 +70,7 @@ public class CalendarServiceImpl implements CalendarService {
     public ScheduleResponseDto updateSchedule(Long id, ScheduleRequestDto dto) {
 
         // 수정할 일정 불러오기
-        Schedule updatedSchedule = calendarRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("조회실패"));
+        Schedule updatedSchedule = calendarRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("수정 실패"));
 
         // 해당일정의 변경점 반영
         updatedSchedule.update(dto.getTitle(), dto.getContent(), dto.getWriterName());
@@ -79,6 +79,18 @@ public class CalendarServiceImpl implements CalendarService {
         return new ScheduleResponseDto(updatedSchedule);
 
         // 반환과 동시에 UPDATE 쿼리문 자동 실행 돼서 해당 변경점이 DB(메모리)의 내용도 변경
+    }
+
+    /**
+     * 특정 일정을 삭제합니다.
+     * @param id : 삭제할 일정의 id값
+     */
+    @Override
+    @Transactional
+    public void deleteSchedule(Long id) {
+        // 일단 먼저 해당 일정이 있는지 조회 후 삭제 진행
+        calendarRepository.delete(calendarRepository.findById(id).orElseThrow());
+
     }
 
 }
