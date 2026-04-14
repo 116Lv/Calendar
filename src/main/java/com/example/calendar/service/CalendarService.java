@@ -22,6 +22,7 @@ public interface CalendarService {
 
     /**
      * 전체 일정을 조회합니다.
+     * @param writerName 작성자명별 필터링을 위한 선택적 파라미터 (null 허용)
      * @return 전체 일정 정보를 담은 응답 DTO (비밀번호 제외)
      */
     List<ScheduleResponseDto> getSchedules(String writerName);
@@ -36,6 +37,7 @@ public interface CalendarService {
     /**
      * 특정 일정을 수정합니다.
      * @param id : 수정할 일정의 id값
+     * @param password : 접근가능한지 확인하기 위해 입력받은 비밀번호
      * @param dto : 수정할 일정 정보가 담긴 요청 DTO
      * @return 수정된 일정 정보를 담은 응답 DTO (비밀번호 제외)
      */
@@ -44,6 +46,7 @@ public interface CalendarService {
     /**
      * 특정 일정을 삭제합니다.
      * @param id : 삭제할 일정의 id값
+     * @param password : 접근가능한지 확인하기 위해 입력받은 비밀번호
      */
     void deleteSchedule(Long id, String password);
 

@@ -6,7 +6,7 @@ import com.example.calendar.dto.ScheduleRequestDto;
 import com.example.calendar.dto.ScheduleResponseDto;
 import com.example.calendar.entity.Comment;
 import com.example.calendar.entity.Schedule;
-import com.example.calendar.repository.CalendarRepository;
+import com.example.calendar.repository.ScheduleRepository;
 import com.example.calendar.repository.CommentRepository;
 import com.example.calendar.service.CalendarService;
 import jakarta.transaction.Transactional;
@@ -23,7 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor    // 역할은 컨트롤러와 동일
 public class CalendarServiceImpl implements CalendarService {
 
-    private final CalendarRepository calendarRepository;
+    private final ScheduleRepository scheduleRepository;
 
     private final CommentRepository commentRepository;
 
@@ -38,7 +38,7 @@ public class CalendarServiceImpl implements CalendarService {
 
         // 매개 변수로 받은 요청DTO를 Entity로 변환 후
         // Repository를 통해 DB에 저장(이때 JPA가 Insert 쿼리문을 자동 생성)
-        Schedule saved = calendarRepository.save(requestDto.toEntity());
+        Schedule saved = scheduleRepository.save(requestDto.toEntity());
 
         // 위에서 저장한 Entity를 다시 응답DTO로 변환 후 반환
         return new ScheduleResponseDto(saved);
@@ -46,15 +46,17 @@ public class CalendarServiceImpl implements CalendarService {
 
     /**
      * 전체 일정을 조회합니다.
+     * @param writerName 작성자명별 필터링을 위한 선택적 파라미터 (null 허용)
      * @return 전체 일정 정보를 담은 응답 DTO (비밀번호 제외)
      */
     @Override
     @Transactional
     public List<ScheduleResponseDto> getSchedules(String writerName) {
+        // 작성자명이 포함돼 넘어왔는지 확인
         if(writerName == null || writerName.isEmpty()) {
-            return calendarRepository.findAllByOrderByEditDateDesc().stream().map(ScheduleResponseDto::new).toList();
+            return scheduleRepository.findAllByOrderByEditDateDesc().stream().map(ScheduleResponseDto::new).toList();
         } else {
-            return calendarRepository.findAllByOrderByEditDateDesc().stream().filter(s -> s.getWriterName().equals(writerName)).map(ScheduleResponseDto::new).toList();
+            return scheduleRepository.findAllByOrderByEditDateDesc().stream().filter(s -> s.getWriterName().equals(writerName)).map(ScheduleResponseDto::new).toList();
         }
     }
 
@@ -66,12 +68,13 @@ public class CalendarServiceImpl implements CalendarService {
     @Override
     @Transactional
     public ScheduleResponseDto getSchedule(Long id) {
-        return calendarRepository.findById(id).map(ScheduleResponseDto::new).orElseThrow(() -> new IllegalArgumentException("조회 실패"));
+        return scheduleRepository.findById(id).map(ScheduleResponseDto::new).orElseThrow(() -> new IllegalArgumentException("조회 실패"));
     }
 
     /**
      * 특정 일정을 수정합니다.
      * @param id : 수정할 일정의 id값
+     * @param password : 접근가능한지 확인하기 위해 입력받은 비밀번호
      * @param dto : 수정할 일정 정보가 담긴 요청 DTO
      * @return 수정된 일정 정보를 담은 응답 DTO (비밀번호 제외)
      */
@@ -80,7 +83,7 @@ public class CalendarServiceImpl implements CalendarService {
     public ScheduleResponseDto updateSchedule(Long id, String password, ScheduleRequestDto dto) {
 
         // 수정할 일정 불러오기
-        Schedule updatedSchedule = calendarRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("수정 실패"));
+        Schedule updatedSchedule = scheduleRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("수정 실패"));
 
         // 비밀번호 비교
         if(updatedSchedule.getPassword().equals(password)) {
@@ -100,15 +103,16 @@ public class CalendarServiceImpl implements CalendarService {
     /**
      * 특정 일정을 삭제합니다.
      * @param id : 삭제할 일정의 id값
+     * @param password : 접근가능한지 확인하기 위해 입력받은 비밀번호
      */
     @Override
     @Transactional
     public void deleteSchedule(Long id, String password) {
         // 일단 먼저 해당 일정이 있는지 조회 후 삭제 진행
-        Schedule deletedSchedule = calendarRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 일정을 찾을수 없습니다."));
+        Schedule deletedSchedule = scheduleRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 일정을 찾을수 없습니다."));
 
         if(deletedSchedule.getPassword().equals(password)) {
-            calendarRepository.delete(deletedSchedule);
+            scheduleRepository.delete(deletedSchedule);
         } else {
             // 만일 다르다면 예외 처리
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
@@ -126,7 +130,7 @@ public class CalendarServiceImpl implements CalendarService {
     @Transactional
     public CommentResponseDto saveComment(Long id, CommentRequestDto dto) {
         // 일정이 있는지 먼저 확인
-        calendarRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("댓글을 달 일정이 존재하지 않습니다."));
+        scheduleRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("댓글을 달 일정이 존재하지 않습니다."));
 
         // 해당 일정에 댓글이 10개 이상인지 확인 후 댓글 추가
         if(commentRepository.countByScheduleId(id) >= 10) {

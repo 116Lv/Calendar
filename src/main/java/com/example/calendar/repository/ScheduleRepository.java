@@ -12,7 +12,7 @@ import java.util.Optional;
  * JpaRepository를 상속받아 기본적인 CRUD 기능을 자동으로 제공받습니다.
  */
 @Repository
-public interface CalendarRepository extends JpaRepository<Schedule, Long> {
+public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     /**
      * 아이디(ID) 값을 기준으로 내림차순 정렬하여 전체 일정을 조회합니다.

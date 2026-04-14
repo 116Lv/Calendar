@@ -46,10 +46,48 @@
 
 ## 🏗 프로젝트 구조 (Architecture)
 
+본 프로젝트는 3-Layer Architecture를 적용하여 관심사를 명확히 분리하고 유지보수성을 높였습니다.
+
+* **Controller (Presentation Layer):** 클라이언트의 HTTP 요청을 수신하여 API 경로 매핑 및 전달받은 데이터를 검증을 해주고 응답을 반환하는 입구 역할.
+
+
+* **Service (Business Layer):** 컨트롤러와 레포지토리 사이를 연결하며 실제 비즈니스 로직(비밀번호 검증, 댓글 개수 제한 등)을 처리.
+
+
+* **Repository (Data Access Layer):** DB에 직접 접근하여 CRUD 작업을 수행. 이번 프로젝트에선 JpaRepository를 상속받아 데이터 영속성을 관리.
+
+### [구조적 이점]
+
+* **관심사의 분리:** 각 계층이 맡은 역할에만 집중하여 코드의 가독성이 높아짐.
+
+
+* **유지보수 용이:** DB 처리 방식이 바뀌면 Repository만, 정책이 바뀌면 Service만 수정하면 되므로 변화에 유연.
+
+
+* **재사용성:** 하나의 서비스 로직을 여러 컨트롤러에서 호출하거나 다른 서비스에서 재사용하기 유리.
+
+---
+
+## 🛠 주요 기술 개념 (Technical Concepts)
+
+Spring Web Annotations : 데이터를 효율적으로 전달받기 위해 상황에 맞는 어노테이션을 활용했습니다.
+
+**@RequestParam:** URL 뒤에 붙는 쿼리 파라미터(?writerName=...)를 추출합니다. 주로 검색 필터링이나 선택적 조회 조건에 사용됩니다.
+
+**@PathVariable:** URL 경로의 일부(/schedules/{id})를 변수로 사용합니다. 특정 리소스를 고유하게 식별할 때 적합합니다.
+
+**@RequestBody:** HTTP Request Body의 JSON 데이터를 Java 객체(DTO)로 변환합니다. 등록/수정 시 대량의 데이터를 안전하게 전달할 때 사용됩니다.
 
 ---
 
 ## 🧐 트러블슈팅 (Troubleshooting)
 
+서로 다른 엔티티 관리 시 Repository 제네릭 타입 오류
+
+**문제:** 댓글 저장 로직 구현 중 ScheduleRepository를 사용하여 Comment 엔티티를 저장하려다 타입 불일치 에러가 발생했습니다.
+
+**원인:** JpaRepository<Schedule, Long>은 Schedule 엔티티 전용이므로 다른 타입인 Comment를 처리할 수 없었습니다.
+
+**해결:** CommentRepository를 별도로 생성하고 제네릭 타입을 <Comment, Long>으로 정확히 지정하여 각 엔티티가 전용 레포지토리에 의해 관리되도록 구조를 분리했습니다.
 
 ---

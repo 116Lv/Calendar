@@ -38,7 +38,8 @@ public class CalendarController {
 
     /**
      * 전체 일정 조회 API
-     * @return 전체 일정 정보와 상태 코드 200(OK) 반환
+     * @param writerName 작성자명별 필터링을 위한 선택적 파라미터 (null 허용)
+     * @return 수정일 기준 내림차순으로 정렬된 일정 목록과 상태 코드 200(OK) 반환
      */
     @GetMapping("/schedules")
     public ResponseEntity<List<ScheduleResponseDto>> getSchedules(@RequestParam(required = false) String writerName) {
